@@ -1,6 +1,7 @@
 from discord.ext import commands
 import discord
 import os
+from utils.esportRequests import EsportRequests
 
 from utils.SQLRequests import SQLRequests
 
@@ -14,4 +15,5 @@ class Setup(commands.Bot, SQLRequests):
             self.db = SQLRequests()
         except:
             self.db = None
+        self.api = EsportRequests()
 

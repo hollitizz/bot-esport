@@ -1,12 +1,12 @@
 version: "3.8"
 services:
     db:
-        container_name: ${BOT_NAME}_host
+        container_name: ${BOT_NAME}_db
         image: mysql:8.0
         restart: always
         environment:
             MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS}
-            MYSQL_DATABASE: ${BOT_NAME}_db
+            MYSQL_DATABASE: ${BOT_NAME}
             MYSQL_USER: ${BOT_NAME}_user
             MYSQL_PASSWORD: ${DB_PASS}
         volumes:
@@ -19,8 +19,8 @@ services:
         build: ./bot
         restart: always
         environment:
-            DB_HOST: ${BOT_NAME}_host
-            DB_NAME: ${BOT_NAME}_db
+            DB_HOST: ${BOT_NAME}_db
+            DB_NAME: ${BOT_NAME}
             DB_USER: ${BOT_NAME}_user
             DB_PASS: ${DB_PASS}
             DB_ROOT_PASS: ${DB_ROOT_PASS}

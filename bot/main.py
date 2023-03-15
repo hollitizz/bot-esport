@@ -1,22 +1,18 @@
-import subprocess
-from time import sleep
 import discord
 from discord.ext import commands, tasks
 import os
 import inspect
-import dotenv
 import aiohttp
 import logging
-from datetime import date, datetime
 import cogs
 
+from utils.esportRequests import EsportRequests
 from utils.SQLRequests import SQLRequests
 from events import onReady, onMemberJoin, onMemberLeave
 from utils.cleanSaveFolder import cleanSaveFolder
 from utils.exportDatabase import exportDataBase
 
 
-dotenv.load_dotenv()
 discord.utils.setup_logging()
 
 class Setup(commands.Bot):
@@ -29,6 +25,7 @@ class Setup(commands.Bot):
             self.db = SQLRequests()
         except:
             self.db = None
+        self.api = EsportRequests()
 
     async def setup_hook(self):
         self.session = aiohttp.ClientSession
@@ -38,10 +35,9 @@ class Setup(commands.Bot):
                 await self.load_extension(f"cogs.{cogName}")
                 await self.tree.sync(guild=discord.Object(id=self.guild_id))
                 logging.info(f"{cogName} commands loaded!")
-        if os.path.isdir(os.getenv("DB_SAVE_PATH")) and self.db is not None:
+        if self.db is not None:
             self.exportDataBaseTask.start()
-        else:
-            logging.warning(f"DB_SAVE_PATH is not a valid directory, auto save task is disabled")
+
 
     @tasks.loop(hours=24)
     async def exportDataBaseTask(self):
