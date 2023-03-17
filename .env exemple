@@ -4,6 +4,7 @@
 # BOT_NAME=YOUR_BOT_NAME_HERE
 # DB_PASS=FILL_THESE_TO_USE_MYSQL_DB
 # DB_ROOT_PASS=FILL_THESE_TO_USE_MYSQL_DB
+# HAS_DB="TRUE_OR_FALSE_DEPENDING_ON_YOUR_NEEDS"
 # should look like this:
 
 TOKEN="OTYy***********************************************************AVcHi2c"
@@ -12,3 +13,4 @@ GUILD_ID="955605512945291354"
 BOT_NAME="test"
 DB_PASS="Abcd1234"
 DB_ROOT_PASS="Abcd1234"
+HAS_DB="true"

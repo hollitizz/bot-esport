@@ -19,7 +19,7 @@ class Esport(commands.Cog, description="Command group for esport commands"):
     )
     @app_commands.default_permissions(manage_messages=True)
     @app_commands.describe(
-        channel="The channel where the schedule will be sent",
+        channel="The id or the name of channel where the schedule will be sent",
     )
     async def setup_scheduler(self, ctx: Interaction, channel: str):
         _logger.info(f"Command setup_scheduler executed by {ctx.user}")

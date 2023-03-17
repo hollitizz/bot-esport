@@ -15,10 +15,11 @@ class EsportRequests:
         url = self.base_url + route
         if params:
             url += "?" + "&".join([f"{k}={v}" for k, v in params.items()])
+        print(url)
         return requests.get(url, headers=self.headers).json()
 
-    def getLeagues(self, language):
+    def getLeagues(self, language) -> dict:
         return self.__get("getLeagues", hl=language)
 
-    def getSchedules(self, language, leagueId):
+    def getSchedules(self, language, leagueId) -> dict:
         return self.__get("getSchedule", hl=language, leagueId=leagueId)

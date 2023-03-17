@@ -21,9 +21,9 @@ class Setup(commands.Bot):
         self.token: str = os.getenv("TOKEN")
         self.guild_id: int = int(os.getenv("GUILD_ID"))
         super().__init__(command_prefix="!", intents=discord.Intents.all(), application_id=self.bot_id)
-        try :
+        if os.getenv("HAS_DB"):
             self.db = SQLRequests()
-        except:
+        else:
             self.db = None
         self.api = EsportRequests()
 
@@ -39,8 +39,9 @@ class Setup(commands.Bot):
             self.exportDataBaseTask.start()
 
 
-    @tasks.loop(hours=24)
+    @tasks.loop(hours=1)
     async def exportDataBaseTask(self):
+        logging.info("Exporting database...")
         exportDataBase()
         cleanSaveFolder()
 
@@ -63,7 +64,8 @@ def main():
         bot = Setup()
         bot.run(bot.token, reconnect=True, log_handler=None)
     except KeyboardInterrupt:
-        print("\nExiting...")
+        logging.info("\nExiting...")
+        exportDataBase()
         bot.session.close()
         bot.db.close()
 
