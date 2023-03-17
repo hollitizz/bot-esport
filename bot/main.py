@@ -21,10 +21,7 @@ class Setup(commands.Bot):
         self.token: str = os.getenv("TOKEN")
         self.guild_id: int = int(os.getenv("GUILD_ID"))
         super().__init__(command_prefix="!", intents=discord.Intents.all(), application_id=self.bot_id)
-        if os.getenv("HAS_DB"):
-            self.db = SQLRequests()
-        else:
-            self.db = None
+        self.db = SQLRequests()
         self.api = EsportRequests()
 
     async def setup_hook(self):
@@ -41,7 +38,6 @@ class Setup(commands.Bot):
 
     @tasks.loop(hours=1)
     async def exportDataBaseTask(self):
-        logging.info("Exporting database...")
         exportDataBase()
         cleanSaveFolder()
 
