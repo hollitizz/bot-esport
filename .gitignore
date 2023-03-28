@@ -4,3 +4,8 @@ db_saves
 curl.sh
 leagues.json
 response.json
+test*.py
+result.png
+/planningFormattor.py
+/response.py
+.vscode

@@ -2,8 +2,8 @@ DROP TABLE IF EXISTS `guilds`;
 
 CREATE TABLE `guilds` (
   `id` varchar(255) NOT NULL,
-  `language` varchar(10) DEFAULT NULL,
-  `followed_leagues` text,
-  `scheduler_channel` text,
+  `language` varchar(10) DEFAULT "en-US",
+  `followed_leagues` text DEFAULT NULL,
+  `scheduler_channel` text DEFAULT NULL,
   PRIMARY KEY (`id`)
 )

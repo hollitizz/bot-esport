@@ -1,3 +1,5 @@
+import asyncio
+import datetime
 import discord
 from discord.ext import commands, tasks
 import os
@@ -6,7 +8,7 @@ import aiohttp
 import logging
 import cogs
 
-from utils.esportRequests import EsportRequests
+from utils.riotApiRequests import riotApiRequests
 from utils.SQLRequests import SQLRequests
 from events import onReady, onMemberJoin, onMemberLeave
 from utils.cleanSaveFolder import cleanSaveFolder
@@ -22,7 +24,7 @@ class Setup(commands.Bot):
         self.guild_id: int = int(os.getenv("GUILD_ID"))
         super().__init__(command_prefix="!", intents=discord.Intents.all(), application_id=self.bot_id)
         self.db = SQLRequests()
-        self.api = EsportRequests()
+        self.api = riotApiRequests()
 
     async def setup_hook(self):
         self.session = aiohttp.ClientSession
@@ -34,7 +36,22 @@ class Setup(commands.Bot):
                 logging.info(f"{cogName} commands loaded!")
         if self.db is not None:
             self.exportDataBaseTask.start()
+            self.send_schedules.start()
 
+    @tasks.loop(hours=168)
+    async def send_schedules(self):
+        logging.info("Sending schedules...")
+
+    @send_schedules.before_loop
+    async def before_send_schedules(self):
+        await self.wait_until_ready()
+        now = datetime.datetime.now()
+        day = now.weekday()
+        target = now + datetime.timedelta(days=7 - day)
+        target = target.replace(hour=8, minute=0, second=0, microsecond=0)
+        delta = target - now
+        logging.info(f"Waiting {target.strftime('%A %d %m %y')} before sending next schedules...")
+        await asyncio.sleep(delta.seconds)
 
     @tasks.loop(hours=1)
     async def exportDataBaseTask(self):

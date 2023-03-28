@@ -27,7 +27,9 @@ services:
             TOKEN: ${TOKEN}
             GUILD_ID: ${GUILD_ID}
             BOT_ID: ${BOT_ID}
+            LOL_ESPORTS_API_KEY: ${LOL_ESPORTS_API_KEY}
         depends_on:
             - db
         volumes:
+            - ./assets:/app/bot/assets
             - ./db:/app/bot/db

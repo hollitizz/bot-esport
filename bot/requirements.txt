@@ -1,3 +1,5 @@
 discord.py
 mysql-connector-python
 requests
+Pillow
+pytz

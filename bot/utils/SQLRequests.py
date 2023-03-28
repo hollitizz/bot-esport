@@ -3,6 +3,8 @@ from mysql.connector import MySQLConnection
 from mysql.connector.connection import CursorBase
 import os
 
+from utils.customClasses import dbGuild
+
 _logger = logging.getLogger(__name__)
 
 class SQLRequests(MySQLConnection):
@@ -24,13 +26,25 @@ class SQLRequests(MySQLConnection):
         except:
             pass
 
-    def getTables(self) -> 'list[str]':
+    def createGuild(self, guild_id: int):
         request = f"""
-            SHOW TABLES
+            INSERT INTO guilds (id)
+            VALUES ("{guild_id}")
         """
         self.__clearCache()
         self.__cursor.execute(request)
-        return [i[0] for i in self.__cursor.fetchall()]
+        self.commit()
+        _logger.info(f"Created guild: {guild_id}")
+
+    def deleteGuild(self, guild_id: int):
+        request = f"""
+            DELETE FROM guilds
+            WHERE id = "{guild_id}"
+        """
+        self.__clearCache()
+        self.__cursor.execute(request)
+        self.commit()
+        _logger.info(f"Deleted guild: {guild_id}")
 
     def getGuildPreferredLanguage(self, guild_id: int) -> str:
         request = f"""
@@ -94,3 +108,12 @@ class SQLRequests(MySQLConnection):
         self.__cursor.execute(request)
         self.commit()
         _logger.info(f"Updated guild: {guild_id} followed leagues to: {','.join(leagues)}")
+
+    def getGuilds(self) -> list[dbGuild]:
+        request = f"""
+            SELECT * FROM guilds
+            WHERE scheduler_channel IS NOT NULL AND followed_leagues IS NOT NULL
+        """
+        self.__clearCache()
+        self.__cursor.execute(request)
+        return [dbGuild(*i) for i in self.__cursor.fetchall()]
