@@ -39,8 +39,6 @@ SORT_ORDER = {
 
 
 async def setupPlanningSender(bot: Setup, ctx: Interaction, channel_id: str):
-    if str(ctx.guild.id) not in [guild.id for guild in bot.db.getGuilds()]:
-        bot.db.createGuild(ctx.guild.id)
     if channel_id.isdigit():
         channel = ctx.guild.get_channel(int(channel_id))
     else:
