@@ -8,7 +8,7 @@ async def onReady(self: Setup):
         status=discord.Status.online,
         activity=discord.Activity(
             type=discord.ActivityType.watching,
-            name="Idk"
+            name="https://lolesports.com/"
         )
     )
     logging.info(f"{self.user} is Ready !")

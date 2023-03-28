@@ -38,4 +38,4 @@ class Diverse(commands.Cog, description="Groupe de commande Divers"):
 
 
 async def setup(bot: Setup):
-    await bot.add_cog(Diverse(bot), guilds=[Object(id=bot.guild_id)])
+    await bot.add_cog(Diverse(bot))

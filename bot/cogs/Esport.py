@@ -37,4 +37,4 @@ class Esport(commands.Cog, description="Command group for esport commands"):
             await ctx.response.send_message("An error occured", ephemeral=True)
 
 async def setup(bot: Setup):
-    await bot.add_cog(Esport(bot), guilds=[Object(id=bot.guild_id)])
+    await bot.add_cog(Esport(bot))

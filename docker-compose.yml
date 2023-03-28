@@ -25,7 +25,6 @@ services:
             DB_PASS: ${DB_PASS}
             DB_ROOT_PASS: ${DB_ROOT_PASS}
             TOKEN: ${TOKEN}
-            GUILD_ID: ${GUILD_ID}
             BOT_ID: ${BOT_ID}
             LOL_ESPORTS_API_KEY: ${LOL_ESPORTS_API_KEY}
         depends_on:
