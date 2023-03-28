@@ -57,7 +57,6 @@ class SQLRequests(MySQLConnection):
         return self.__cursor.fetchone()[0]
 
     def updateGuildPreferredLanguage(self, guild_id: int, language: str):
-        _logger.info(f"Updating guild: {guild_id} preferred language to: {language}")
         request = f"""
             UPDATE guilds
             SET language = "{language}"

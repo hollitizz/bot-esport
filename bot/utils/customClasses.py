@@ -7,9 +7,11 @@ class dbGuild:
         followed_leagues: str,
         scheduler_channel: str,
         last_message: str,
+        timezone: str
     ):
         self.id = guild_id
         self.language = language
         self.followed_leagues = followed_leagues.split(',')
         self.scheduler_channel = scheduler_channel
         self.last_message = last_message
+        self.timezone = timezone

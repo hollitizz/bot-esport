@@ -46,6 +46,7 @@ async def sendPlanning(self: Setup):
         ).get('data', {}).get('schedule', {}).get('events', [])
         planning = getFormattedPlanning(
             guild.language,
+            guild.timezone,
             getSchedulesByDayOnCurrentWeek(schedules)
         )
         with BytesIO() as image_binary:
@@ -53,6 +54,7 @@ async def sendPlanning(self: Setup):
             image_binary.seek(0)
             new_message = await channel.send(file=discord.File(fp=image_binary, filename='planning.png'))
             self.db.updatePlanningLastMessage(guild.id, new_message.id)
+
 
 async def refreshPlanning(self: Setup):
     for guild in self.db.getGuilds():
@@ -78,10 +80,10 @@ async def refreshPlanning(self: Setup):
         ).get('data', {}).get('schedule', {}).get('events', [])
         planning = getFormattedPlanning(
             guild.language,
-            getSchedulesByDayOnCurrentWeek(schedules)
+            guild.timezone,
+            getSchedulesByDayOnCurrentWeek(schedules),
         )
         with BytesIO() as image_binary:
             planning.save(image_binary, 'PNG')
             image_binary.seek(0)
-            _logger.debug('editing planning')
             await message.edit(attachments=[discord.File(fp=image_binary, filename='planning.png')])

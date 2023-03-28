@@ -6,5 +6,6 @@ CREATE TABLE `guilds` (
   `followed_leagues` text DEFAULT NULL,
   `scheduler_channel` text DEFAULT NULL,
   `last_message` text DEFAULT NULL,
+  `timezone` varchar(255) DEFAULT "Europe/Paris",
   PRIMARY KEY (`id`)
 )

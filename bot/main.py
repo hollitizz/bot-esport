@@ -6,6 +6,8 @@ import os
 import inspect
 import aiohttp
 import logging
+
+import pytz
 import cogs
 
 from utils.riotApiRequests import riotApiRequests
@@ -14,6 +16,7 @@ from events import onReady, onMemberJoin, onMemberLeave
 from utils.exportDatabase import exportDataBase
 from utils.sendPlanning import sendPlanning, refreshPlanning
 
+tz = pytz.timezone('Europe/Paris')
 
 discord.utils.setup_logging()
 
@@ -28,12 +31,12 @@ class Setup(commands.Bot):
 
     async def setup_hook(self):
         self.session = aiohttp.ClientSession
+        logging.info("Loading commands...")
         for cogName, cog in inspect.getmembers(cogs):
             if inspect.isclass(cog):
-                logging.info(f"Loading {cogName} commands...")
                 await self.load_extension(f"cogs.{cogName}")
-                await self.tree.sync(guild=discord.Object(id=self.guild_id))
-                logging.info(f"{cogName} commands loaded!")
+            await self.tree.sync()
+        logging.info("Commands loaded")
         if self.db is not None:
             self.exportDataBaseTask.start()
             self.send_planning.start()
@@ -46,7 +49,7 @@ class Setup(commands.Bot):
     @send_planning.before_loop
     async def before_send_planning(self):
         await self.wait_until_ready()
-        now = datetime.datetime.now()
+        now = datetime.datetime.now(tz)
         day = now.weekday()
         target = now + datetime.timedelta(days=7 - day)
         target = target.replace(hour=8, minute=0, second=0, microsecond=0)
@@ -61,11 +64,11 @@ class Setup(commands.Bot):
     @refresh_planning.before_loop
     async def before_refresh_planning(self):
         await self.wait_until_ready()
-        now = datetime.datetime.now()
-        target = now + datetime.timedelta(days=1)
-        target = target.replace(hour=0, minute=0, second=0, microsecond=0)
-        delta = target - now
-        await asyncio.sleep(delta.seconds)
+        # now = datetime.datetime.now(tz)
+        # target = now + datetime.timedelta(days=1)
+        # target = target.replace(hour=0, minute=0, second=0, microsecond=0)
+        # delta = target - now
+        # await asyncio.sleep(delta.seconds)
 
     @tasks.loop(hours=1)
     async def exportDataBaseTask(self):

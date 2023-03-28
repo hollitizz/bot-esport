@@ -3,6 +3,7 @@ import datetime
 from io import BytesIO
 import os
 from PIL import Image, ImageDraw
+import pytz
 import requests
 from utils.planningConst import *
 import logging
@@ -11,7 +12,7 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
-def splitAmPm(datas: list[dict]):
+def splitAmPm(datas: list[dict], tz: pytz.timezone):
     am = []
     pm = []
     for data in datas:
@@ -62,7 +63,8 @@ def drawHour(
     y: int,
     img_draw: ImageDraw,
     padding_top: int,
-    time: str
+    time: str,
+    tz: pytz.timezone
 ):
     time = datetime.datetime.fromisoformat(
         time
@@ -75,7 +77,16 @@ def drawHour(
     )
 
 
-def drawLeadingLeague(x: int, y: int, timetable: Image, img_draw: ImageDraw, padding_top: int, league: dict, time: str):
+def drawLeadingLeague(
+    x: int,
+    y: int,
+    timetable: Image,
+    img_draw: ImageDraw,
+    padding_top: int,
+    league: dict,
+    time: str,
+    tz: pytz.timezone
+):
     img = Image.open(f"assets/leaguesIcons/{league}.png").resize(icon_size)
     timetable.paste(
         img,
@@ -83,7 +94,7 @@ def drawLeadingLeague(x: int, y: int, timetable: Image, img_draw: ImageDraw, pad
          league_icon_margin, y + padding_top),
         img
     )
-    drawHour(x, y, img_draw, padding_top, time)
+    drawHour(x, y, img_draw, padding_top, time, tz)
     drawSeparator(x, y, img_draw, padding_top)
 
 
@@ -92,7 +103,8 @@ def drawHalfDayMatches(
     week_day: int,
     timetable: Image,
     img_draw: ImageDraw,
-    is_am: bool
+    is_am: bool,
+    tz: pytz.timezone
 ):
     last_league = None
     py = 0 if is_am else content_y - (len(data) + 1) * (icon_b + margin)
@@ -111,7 +123,8 @@ def drawHalfDayMatches(
                 img_draw,
                 padding_top,
                 last_league['slug'],
-                data['startTime']
+                data['startTime'],
+                tz
             )
             y += icon_b + margin + padding_top
         if week_day != 0:
@@ -123,12 +136,13 @@ def drawHalfDayMatches(
         )
 
 
-def getFormattedPlanning(language, schedules):
+def getFormattedPlanning(language, timezone, schedules):
     timetable = Image.open(f'assets/{language}_timetable.png')
+    tz = pytz.timezone(timezone)
     img_draw: ImageDraw = ImageDraw.Draw(timetable)
     for date, datas in schedules.items():
         week_day = datetime.date.fromisoformat(date).weekday()
-        am, pm = splitAmPm(datas)
-        drawHalfDayMatches(am, week_day, timetable, img_draw, True)
-        drawHalfDayMatches(pm, week_day, timetable, img_draw, False)
+        am, pm = splitAmPm(datas, tz)
+        drawHalfDayMatches(am, week_day, timetable, img_draw, True, tz)
+        drawHalfDayMatches(pm, week_day, timetable, img_draw, False, tz)
     return timetable

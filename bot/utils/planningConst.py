@@ -1,6 +1,4 @@
-import pytz
 from PIL import ImageFont
-tz = pytz.timezone('Europe/Paris')
 
 hour_font = ImageFont.truetype("assets/coolvetica_rg.ttf", size=20)
 top = 178
