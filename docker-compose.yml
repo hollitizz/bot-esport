@@ -12,7 +12,7 @@ services:
         volumes:
           - ./db/db_saves:/docker-entrypoint-initdb.d/:ro
         ports:
-            - 3300:3306
+            - 3302:3306
 
     bot:
         container_name: ${BOT_NAME}_bot
