@@ -6,7 +6,7 @@ from utils.riotApiRessources import LANGUAGES
 
 from utils.types import Setup
 
-from commands.diverse import ping, help
+from commands.diverse import ping, help, setupLanguage
 
 _logger = logging.getLogger(__name__)
 
@@ -34,7 +34,7 @@ class Diverse(commands.Cog, description="Groupe de commande Divers"):
     )
     async def setup_language(self, ctx: Interaction, language: str):
         _logger.info(f"setup_language command used by {ctx.user} with language {language}")
-        await ctx.response.send_message("Language changed successfully !", ephemeral=True)
+        await setupLanguage.setupLanguage(self.bot, ctx, language)
 
 
 async def setup(bot: Setup):

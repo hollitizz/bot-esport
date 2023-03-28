@@ -57,6 +57,7 @@ class SQLRequests(MySQLConnection):
         return self.__cursor.fetchone()[0]
 
     def updateGuildPreferredLanguage(self, guild_id: int, language: str):
+        _logger.info(f"Updating guild: {guild_id} preferred language to: {language}")
         request = f"""
             UPDATE guilds
             SET language = "{language}"
@@ -66,16 +67,6 @@ class SQLRequests(MySQLConnection):
         self.__cursor.execute(request)
         self.commit()
         _logger.info(f"Updated guild: {guild_id} preferred language to: {language}")
-
-    def getGuildSchedulerChannel(self, guild_id: int) -> str:
-        request = f"""
-            SELECT scheduler_channel
-            FROM guilds
-            WHERE id = "{guild_id}"
-        """
-        self.__clearCache()
-        self.__cursor.execute(request)
-        return self.__cursor.fetchone()[0]
 
     def updateGuildSchedulerChannel(self, guild_id: int, channel_id: int):
         request = f"""
@@ -88,15 +79,16 @@ class SQLRequests(MySQLConnection):
         self.commit()
         _logger.info(f"Updated guild: {guild_id} scheduler channel to channel: {channel_id}")
 
-    def getGuildFollowedLeagues(self, guild_id: int) -> list[str]:
+    def updatePlanningLastMessage(self, guild_id: int, new_message_id: int):
         request = f"""
-            SELECT followed_leagues
-            FROM guilds
+            UPDATE guilds
+            SET last_message = "{new_message_id}"
             WHERE id = "{guild_id}"
         """
         self.__clearCache()
         self.__cursor.execute(request)
-        return self.__cursor.fetchone()[0].split(",")
+        self.commit()
+        _logger.info(f"Updated guild: {guild_id} last message id to: {new_message_id}")
 
     def updateGuildFollowedLeagues(self, guild_id: int, leagues: list[str]):
         request = f"""

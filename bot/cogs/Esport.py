@@ -2,10 +2,9 @@ import logging
 from discord.ext import commands
 from discord import app_commands, Interaction, Object
 
-from commands.esport import setupScheduler
+from commands.esport import setupPlanningSender
 
 from utils.types import Setup
-from utils import sendScheduler
 
 _logger = logging.getLogger(__name__)
 
@@ -24,7 +23,7 @@ class Esport(commands.Cog, description="Command group for esport commands"):
     )
     async def setup_scheduler(self, ctx: Interaction, channel: str):
         _logger.info(f"Command setup_scheduler executed by {ctx.user}")
-        await setupScheduler.setupScheduler(self.bot, ctx, channel)
+        await setupPlanningSender.setupPlanningSender(self.bot, ctx, channel)
 
     @setup_scheduler.error
     async def setup_scheduler_error(self, ctx: Interaction, error):
@@ -36,11 +35,6 @@ class Esport(commands.Cog, description="Command group for esport commands"):
             )
         else:
             await ctx.response.send_message("An error occured", ephemeral=True)
-
-    @app_commands.command(name="test")
-    async def test(self, ctx: Interaction):
-        await sendScheduler.sendScheduler(self.bot)
-        await ctx.response.send_message("done", ephemeral=True)
 
 async def setup(bot: Setup):
     await bot.add_cog(Esport(bot), guilds=[Object(id=bot.guild_id)])

@@ -1,9 +1,14 @@
 
 import datetime
 from io import BytesIO
+import os
 from PIL import Image, ImageDraw
 import requests
 from utils.planningConst import *
+import logging
+
+
+_logger = logging.getLogger(__name__)
 
 
 def splitAmPm(datas: list[dict]):
@@ -23,10 +28,17 @@ def drawGame(
     x: int,
     y: int,
     timetable: Image,
-    team_images: tuple[str, str],
+    teams: tuple[str, str],
 ):
-    for team in team_images:
-        img = Image.open(BytesIO(requests.get(team).content)).resize(icon_size)
+    for team in teams:
+        if os.path.exists(f"assets/teamsIcons/{team['code']}.png"):
+            img = Image.open(
+                f"assets/teamsIcons/{team['code']}.png").resize(icon_size)
+        else:
+            img = Image.open(BytesIO(requests.get(team['image']).content))
+            img.save(f"assets/teamsIcons/{team['code']}.png")
+            _logger.info(f"Saved logo of {team['code']}")
+            img = img.resize(icon_size)
         timetable.paste(img, (x, y), img)
         x += icon_b + margin
 
@@ -107,7 +119,7 @@ def drawHalfDayMatches(
         drawGame(
             x, y,
             timetable,
-            (match['teams'][0]['image'], match['teams'][1]['image'])
+            match['teams']
         )
 
 

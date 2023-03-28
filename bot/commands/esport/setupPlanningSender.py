@@ -5,7 +5,6 @@ from utils.getChannelByName import getChannelByName
 
 from utils.types import Setup
 
-_logger = logging.getLogger(__name__)
 SORT_ORDER = {
     'fr-FR': [
         'INTERNATIONAL',
@@ -39,7 +38,7 @@ SORT_ORDER = {
     ]}
 
 
-async def setupScheduler(bot: Setup, ctx: Interaction, channel_id: str):
+async def setupPlanningSender(bot: Setup, ctx: Interaction, channel_id: str):
     if channel_id.isdigit():
         channel = ctx.guild.get_channel(int(channel_id))
     else:

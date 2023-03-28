@@ -11,8 +11,8 @@ import cogs
 from utils.riotApiRequests import riotApiRequests
 from utils.SQLRequests import SQLRequests
 from events import onReady, onMemberJoin, onMemberLeave
-from utils.cleanSaveFolder import cleanSaveFolder
 from utils.exportDatabase import exportDataBase
+from utils.sendPlanning import sendPlanning, refreshPlanning
 
 
 discord.utils.setup_logging()
@@ -36,27 +36,40 @@ class Setup(commands.Bot):
                 logging.info(f"{cogName} commands loaded!")
         if self.db is not None:
             self.exportDataBaseTask.start()
-            self.send_schedules.start()
+            self.send_planning.start()
+            self.refresh_planning.start()
 
     @tasks.loop(hours=168)
-    async def send_schedules(self):
-        logging.info("Sending schedules...")
+    async def send_planning(self):
+        await sendPlanning(self)
 
-    @send_schedules.before_loop
-    async def before_send_schedules(self):
+    @send_planning.before_loop
+    async def before_send_planning(self):
         await self.wait_until_ready()
         now = datetime.datetime.now()
         day = now.weekday()
         target = now + datetime.timedelta(days=7 - day)
         target = target.replace(hour=8, minute=0, second=0, microsecond=0)
         delta = target - now
-        logging.info(f"Waiting {target.strftime('%A %d %m %y')} before sending next schedules...")
+        await asyncio.sleep(delta.seconds)
+
+
+    @tasks.loop(hours=24)
+    async def refresh_planning(self):
+        await refreshPlanning(self)
+
+    @refresh_planning.before_loop
+    async def before_refresh_planning(self):
+        await self.wait_until_ready()
+        now = datetime.datetime.now()
+        target = now + datetime.timedelta(days=1)
+        target = target.replace(hour=0, minute=0, second=0, microsecond=0)
+        delta = target - now
         await asyncio.sleep(delta.seconds)
 
     @tasks.loop(hours=1)
     async def exportDataBaseTask(self):
         exportDataBase()
-        cleanSaveFolder()
 
     @exportDataBaseTask.before_loop
     async def before_exportDataBaseTask(self):
@@ -78,7 +91,6 @@ def main():
         bot.run(bot.token, reconnect=True, log_handler=None)
     except KeyboardInterrupt:
         logging.info("\nExiting...")
-        exportDataBase()
         bot.session.close()
         bot.db.close()
 

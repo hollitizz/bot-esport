@@ -1,7 +1,4 @@
-import logging
 import discord
-
-_logger = logging.getLogger(__name__)
 
 class createSelect(discord.ui.Select):
     def __init__(

@@ -6,7 +6,7 @@ hour_font = ImageFont.truetype("assets/coolvetica_rg.ttf", size=20)
 top = 178
 left = 15
 content_x = 170
-content_y = 807
+content_y = 907
 icon_b = 70
 icon_size = (icon_b, icon_b)
 white = (217, 217, 217)
