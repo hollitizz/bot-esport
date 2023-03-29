@@ -1,4 +1,3 @@
-import logging
 from discord import Interaction
 from main import Setup
 

@@ -1,6 +1,6 @@
 import logging
 from discord.ext import commands
-from discord import app_commands, Interaction, Object
+from discord import app_commands, Interaction
 from discord.app_commands import Choice
 from utils.riotApiRessources import LANGUAGES
 

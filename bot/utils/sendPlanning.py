@@ -1,13 +1,10 @@
 import datetime
 from io import BytesIO
-import logging
 
 import discord
 from utils.planningFormattor import getFormattedPlanning
 
 from utils.types import Setup
-
-_logger = logging.getLogger(__name__)
 
 
 def getSchedulesByDayOnCurrentWeek(schedules: list[dict]):

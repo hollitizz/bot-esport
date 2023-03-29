@@ -3,6 +3,8 @@ import discord
 
 from utils.types import Setup
 
+_logger = logging.getLogger(__name__)
+
 async def onReady(self: Setup):
     await self.change_presence(
         status=discord.Status.online,
@@ -11,4 +13,4 @@ async def onReady(self: Setup):
             name="https://lolesports.com/"
         )
     )
-    logging.info(f"{self.user} is Ready !")
+    _logger.info(f"{self.user} is Ready !")

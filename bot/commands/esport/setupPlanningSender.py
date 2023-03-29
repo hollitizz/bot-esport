@@ -1,4 +1,3 @@
-import logging
 from discord import Interaction
 from utils.createSelect import createViewForSelect
 from utils.getChannelByName import getChannelByName
