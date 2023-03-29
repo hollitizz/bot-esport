@@ -48,7 +48,7 @@ def drawGame(
             img_draw.text(
                 (x, y),
                 team['code'],
-                font=hour_font,
+                font=font,
                 fill=white
             )
         x += icon_b + margin
@@ -82,7 +82,7 @@ def drawHour(
     img_draw.text(
         (x + margin, y + icon_b / 2 + padding_top),
         time,
-        font=font,
+        font=hour_font,
         fill=white
     )
 
