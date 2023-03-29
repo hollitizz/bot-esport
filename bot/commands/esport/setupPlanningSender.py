@@ -2,7 +2,7 @@ from discord import Interaction
 from utils.createSelect import createViewForSelect
 from utils.getChannelByName import getChannelByName
 
-from utils.types import Setup
+from utils.types import BotType
 
 SORT_ORDER = {
     'fr-FR': [
@@ -37,7 +37,7 @@ SORT_ORDER = {
     ]}
 
 
-async def setupPlanningSender(bot: Setup, ctx: Interaction, channel_id: str):
+async def setupPlanningSender(bot: BotType, ctx: Interaction, channel_id: str):
     if channel_id.isdigit():
         channel = ctx.guild.get_channel(int(channel_id))
     else:

@@ -1,8 +1,8 @@
 from discord import Guild
-from utils.types import Setup
+from utils.types import BotType
 
 
-async def onGuildJoin(self: Setup, guild: Guild):
+async def onGuildJoin(self: BotType, guild: Guild):
     self.db.createGuild(guild.id)
     try:
         await guild.system_channel.send(

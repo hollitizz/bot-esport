@@ -4,13 +4,13 @@ from discord import app_commands, Interaction, Object
 
 from commands.esport import setupPlanningSender
 
-from utils.types import Setup
+from utils.types import BotType
 
 _logger = logging.getLogger(__name__)
 
 
 class Esport(commands.Cog, description="Command group for esport commands"):
-    def __init__(self, bot: Setup):
+    def __init__(self, bot: BotType):
         self.bot = bot
 
     @app_commands.command(
@@ -36,5 +36,5 @@ class Esport(commands.Cog, description="Command group for esport commands"):
         else:
             await ctx.response.send_message("An error occured", ephemeral=True)
 
-async def setup(bot: Setup):
+async def setup(bot: BotType):
     await bot.add_cog(Esport(bot))

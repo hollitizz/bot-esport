@@ -27,6 +27,8 @@ services:
             TOKEN: ${TOKEN}
             BOT_ID: ${BOT_ID}
             LOL_ESPORTS_API_KEY: ${LOL_ESPORTS_API_KEY}
+            DEBUG: ${DEBUG}
+            ADMIN_GUILD_ID: ${ADMIN_GUILD_ID}
         depends_on:
             - db
         volumes:

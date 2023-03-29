@@ -1,10 +1,10 @@
 import logging
 from discord.ext import commands
-from discord import app_commands, Interaction
+from discord import Object, app_commands, Interaction
 from discord.app_commands import Choice
 from utils.riotApiRessources import LANGUAGES
 
-from utils.types import Setup
+from utils.types import BotType
 
 from commands.diverse import ping, help, setupLanguage
 
@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 
 
 class Diverse(commands.Cog, description="Groupe de commande Divers"):
-    def __init__(self, bot: Setup):
+    def __init__(self, bot: BotType):
         self.bot = bot
 
     @app_commands.command(name="ping", description="Répond avec \"Pong !\"")
@@ -37,5 +37,5 @@ class Diverse(commands.Cog, description="Groupe de commande Divers"):
         await setupLanguage.setupLanguage(self.bot, ctx, language)
 
 
-async def setup(bot: Setup):
+async def setup(bot: BotType):
     await bot.add_cog(Diverse(bot))

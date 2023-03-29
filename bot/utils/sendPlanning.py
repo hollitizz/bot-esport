@@ -4,7 +4,7 @@ from io import BytesIO
 import discord
 from utils.planningFormattor import getFormattedPlanning
 
-from utils.types import Setup
+from utils.types import BotType
 
 
 def getSchedulesByDayOnCurrentWeek(schedules: list[dict]):
@@ -22,7 +22,7 @@ def getSchedulesByDayOnCurrentWeek(schedules: list[dict]):
     return weekGames
 
 
-async def sendPlanning(self: Setup):
+async def sendPlanning(self: BotType):
     for guild in self.db.getGuilds():
         g = self.get_guild(int(guild.id))
         if g is None:
@@ -53,7 +53,7 @@ async def sendPlanning(self: Setup):
             self.db.updatePlanningLastMessage(guild.id, new_message.id)
 
 
-async def refreshPlanning(self: Setup):
+async def refreshPlanning(self: BotType):
     for guild in self.db.getGuilds():
         g = self.get_guild(int(guild.id))
         if g is None:

@@ -1,11 +1,11 @@
 import logging
 import discord
 
-from utils.types import Setup
+from utils.types import BotType
 
 _logger = logging.getLogger(__name__)
 
-async def onReady(self: Setup):
+async def onReady(self: BotType):
     await self.change_presence(
         status=discord.Status.online,
         activity=discord.Activity(

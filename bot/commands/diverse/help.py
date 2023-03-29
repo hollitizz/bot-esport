@@ -1,4 +1,4 @@
-from utils.types import Setup
+from utils.types import BotType
 from discord import Interaction, SelectOption, ui, app_commands, Embed
 
 
@@ -52,5 +52,5 @@ class drawCogView(ui.View):
         self.add_item(drawCogSelect(items))
 
 
-async def help(self: Setup, ctx: Interaction):
+async def help(self: BotType, ctx: Interaction):
     await ctx.response.send_message("Help menu", ephemeral=True, view=drawCogView(self.cogs))
