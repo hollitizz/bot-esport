@@ -29,6 +29,7 @@ def drawGame(
     x: int,
     y: int,
     timetable: Image,
+    img_draw: ImageDraw,
     teams: tuple[str, str],
 ):
     for team in teams:
@@ -40,7 +41,16 @@ def drawGame(
             img.save(f"assets/teamsIcons/{team['code']}.png")
             _logger.info(f"Saved logo of {team['code']}")
             img = img.resize(icon_size)
-        timetable.paste(img, (x, y), img)
+        try:
+            timetable.paste(img, (x, y), img)
+        except ValueError:
+            _logger.error(f"Error while pasting {team['code']}")
+            img_draw.text(
+                (x, y),
+                team['code'],
+                font=hour_font,
+                fill=white
+            )
         x += icon_b + margin
 
 
@@ -72,7 +82,7 @@ def drawHour(
     img_draw.text(
         (x + margin, y + icon_b / 2 + padding_top),
         time,
-        font=hour_font,
+        font=font,
         fill=white
     )
 
@@ -88,12 +98,21 @@ def drawLeadingLeague(
     tz: pytz.timezone
 ):
     img = Image.open(f"assets/leaguesIcons/{league}.png").resize(icon_size)
-    timetable.paste(
-        img,
-        (int(x + content_x / 2 - icon_b / 2) +
-         league_icon_margin, y + padding_top),
-        img
-    )
+    try:
+        timetable.paste(
+            img,
+            (int(x + content_x / 2 - icon_b / 2) +
+             league_icon_margin, y + padding_top),
+            img
+        )
+    except ValueError:
+        _logger.error(f"Error while pasting {league}")
+        img_draw.text(
+            (x, y),
+            league,
+            font=font,
+            fill=white
+        )
     drawHour(x, y, img_draw, padding_top, time, tz)
     drawSeparator(x, y, img_draw, padding_top)
 
@@ -132,11 +151,12 @@ def drawHalfDayMatches(
         drawGame(
             x, y,
             timetable,
+            img_draw,
             match['teams']
         )
 
 
-def getFormattedPlanning(language, timezone, schedules):
+def getFormattedPlanning(language: str, timezone: pytz.timezone, schedules: dict):
     timetable = Image.open(f'assets/{language}_timetable.png')
     tz = pytz.timezone(timezone)
     img_draw: ImageDraw = ImageDraw.Draw(timetable)

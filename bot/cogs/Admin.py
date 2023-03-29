@@ -21,5 +21,12 @@ class Admin(commands.Cog, description="Groupe de commande Divers"):
         await sendPlanning.refreshPlanning(self.bot)
         await ctx.edit_original_response(content="Planning refreshed !")
 
+    @app_commands.command(name="restart", description="Répond avec \"Pong !\"")
+    async def restart(self, ctx: Interaction):
+        _logger.info(f"Commande restart exécutée par {ctx.user}")
+        await ctx.response.defer(ephemeral=True, thinking=True)
+        await ctx.edit_original_response(content="Restarting...")
+        await self.bot.close()
+
 async def setup(bot: BotType):
     await bot.add_cog(Admin(bot), guild=Object(id=os.getenv("ADMIN_GUILD_ID")))

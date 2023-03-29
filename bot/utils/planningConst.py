@@ -1,5 +1,6 @@
 from PIL import ImageFont
 
+font = ImageFont.truetype("assets/coolvetica_rg.ttf", size=40)
 hour_font = ImageFont.truetype("assets/coolvetica_rg.ttf", size=20)
 top = 178
 left = 15

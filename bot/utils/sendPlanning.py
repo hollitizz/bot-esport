@@ -5,6 +5,9 @@ import discord
 from utils.planningFormattor import getFormattedPlanning
 
 from utils.types import BotType
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 def getSchedulesByDayOnCurrentWeek(schedules: list[dict]):
@@ -41,11 +44,15 @@ async def sendPlanning(self: BotType):
         schedules = self.api.getSchedules(
             guild.language, guild.followed_leagues
         ).get('data', {}).get('schedule', {}).get('events', [])
-        planning = getFormattedPlanning(
-            guild.language,
-            guild.timezone,
-            getSchedulesByDayOnCurrentWeek(schedules)
-        )
+        try:
+            planning = getFormattedPlanning(
+                guild.language,
+                guild.timezone,
+                getSchedulesByDayOnCurrentWeek(schedules)
+            )
+        except Exception as e:
+            _logger.error(e)
+            continue
         with BytesIO() as image_binary:
             planning.save(image_binary, 'PNG')
             image_binary.seek(0)
@@ -75,11 +82,14 @@ async def refreshPlanning(self: BotType):
         schedules = self.api.getSchedules(
             guild.language, guild.followed_leagues
         ).get('data', {}).get('schedule', {}).get('events', [])
-        planning = getFormattedPlanning(
-            guild.language,
-            guild.timezone,
-            getSchedulesByDayOnCurrentWeek(schedules),
-        )
+        try:
+            planning = getFormattedPlanning(
+                guild.language,
+                guild.timezone,
+                getSchedulesByDayOnCurrentWeek(schedules)
+            )
+        except Exception as e:
+            _logger.error(e)
         with BytesIO() as image_binary:
             planning.save(image_binary, 'PNG')
             image_binary.seek(0)
