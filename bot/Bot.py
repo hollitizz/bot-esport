@@ -71,7 +71,7 @@ class Bot(commands.Bot):
         target = now + datetime.timedelta(days=1)
         target = target.replace(hour=0, minute=0, second=0, microsecond=0)
         delta = target - now
-        _logger.info(f"Waiting {round(delta.total_seconds())} seconds ({target.strftime('%d/%m/%Y, %H:%M:%S')}) before sending planning")
+        _logger.info(f"Waiting {round(delta.total_seconds())} seconds ({target.strftime('%d/%m/%Y, %H:%M:%S')}) before refreshing planning")
         await asyncio.sleep(delta.total_seconds())
 
     @tasks.loop(hours=1)
