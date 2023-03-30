@@ -55,8 +55,8 @@ class Bot(commands.Bot):
         target = now + datetime.timedelta(days=7 - day)
         target = target.replace(hour=8, minute=0, second=0, microsecond=0)
         delta = target - now
-        _logger.info(f"Waiting {delta.seconds} ({target.strftime('%d/%m/%Y, %H:%M:%S')}) seconds before sending planning")
-        await asyncio.sleep(delta.seconds)
+        _logger.info(f"Waiting {round(delta.total_seconds())} seconds ({target.strftime('%d/%m/%Y, %H:%M:%S')}) before sending planning")
+        await asyncio.sleep(delta.total_seconds())
 
     @tasks.loop(hours=24)
     async def refresh_planning(self):
@@ -71,8 +71,8 @@ class Bot(commands.Bot):
         target = now + datetime.timedelta(days=1)
         target = target.replace(hour=0, minute=0, second=0, microsecond=0)
         delta = target - now
-        _logger.info(f"Waiting {delta.seconds} ({target.strftime('%d/%m/%Y, %H:%M:%S')}) seconds before sending planning")
-        await asyncio.sleep(delta.seconds)
+        _logger.info(f"Waiting {round(delta.total_seconds())} seconds ({target.strftime('%d/%m/%Y, %H:%M:%S')}) before sending planning")
+        await asyncio.sleep(delta.total_seconds())
 
     @tasks.loop(hours=1)
     async def exportDataBaseTask(self):
