@@ -1,0 +1,23 @@
+name: bot-esport
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+jobs:
+  deploy:
+    name: "Deploy bot-esport"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build the docker image on the server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          key: ${{ secrets.SSH_KEY }}
+          username: ${{ secrets.SSH_USERNAME }}
+
+          script: |
+            cd ~/dev/bot-esport
+            git pull
+            docker compose up -d --build bot
