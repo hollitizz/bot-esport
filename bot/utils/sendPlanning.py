@@ -1,5 +1,6 @@
 import datetime
 from io import BytesIO
+import traceback
 
 import discord
 from utils.planningFormattor import getFormattedPlanning
@@ -88,9 +89,9 @@ async def refreshPlanning(self: BotType):
                 guild.timezone,
                 getSchedulesByDayOnCurrentWeek(schedules)
             )
+            with BytesIO() as image_binary:
+                planning.save(image_binary, 'PNG')
+                image_binary.seek(0)
+                await message.edit(attachments=[discord.File(fp=image_binary, filename='planning.png')])
         except Exception as e:
-            _logger.error(e)
-        with BytesIO() as image_binary:
-            planning.save(image_binary, 'PNG')
-            image_binary.seek(0)
-            await message.edit(attachments=[discord.File(fp=image_binary, filename='planning.png')])
+            _logger.error(traceback.format_exc())

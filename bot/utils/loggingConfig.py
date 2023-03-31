@@ -52,7 +52,7 @@ class _ColourFormatter(logging.Formatter):
 
 
 def setupLogging():
-    level = logging.DEBUG if os.environ.get('DEBUG') == True else logging.INFO
+    level = logging.DEBUG if os.getenv('DEBUG') == 'True' else logging.INFO
     handler = logging.StreamHandler()
     if isinstance(handler, logging.StreamHandler) and _streamSupportsColor(handler.stream):
         formatter = _ColourFormatter()

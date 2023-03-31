@@ -16,6 +16,8 @@ def splitAmPm(datas: list[dict], tz: pytz.timezone):
     am = []
     pm = []
     for data in datas:
+        if data.get('type') == 'show':
+            continue
         time = datetime.datetime.fromisoformat(
             data['startTime']).astimezone(tz)
         if time.hour < 12:
@@ -30,6 +32,7 @@ def drawGame(
     y: int,
     timetable: Image,
     img_draw: ImageDraw,
+    is_completed: bool,
     teams: tuple[str, str],
 ):
     for team in teams:
@@ -38,19 +41,13 @@ def drawGame(
                 f"assets/teamsIcons/{team['code']}.png").resize(icon_size)
         else:
             img = Image.open(BytesIO(requests.get(team['image']).content))
-            img.save(f"assets/teamsIcons/{team['code']}.png")
-            _logger.info(f"Saved logo of {team['code']}")
+            img.save(f"assets/teamsIcons/{team['code']}.png", "PNG")
             img = img.resize(icon_size)
-        try:
-            timetable.paste(img, (x, y), img)
-        except ValueError:
-            _logger.error(f"Error while pasting {team['code']}")
-            img_draw.text(
-                (x, y),
-                team['code'],
-                font=font,
-                fill=white
-            )
+        if is_completed and team['result']['outcome'] == 'loss':
+            A = img.getchannel('A')
+            newA = A.point(lambda i: 128 if i > 100 else 0)
+            img.putalpha(newA)
+        _pasteImg(timetable, img_draw, img, x, y, team['name'])
         x += icon_b + margin
 
 
@@ -87,6 +84,26 @@ def drawHour(
     )
 
 
+def _pasteImg(
+    timetable: Image,
+    img_draw: ImageDraw,
+    img: Image,
+    x: int,
+    y: int,
+    replacement_text: str
+):
+    try:
+        timetable.paste(img, (int(x), int(y)), img)
+    except ValueError:
+        _logger.error(f"Error while pasting {img}")
+        img_draw.text(
+            (int(x), int(y)),
+            replacement_text,
+            font=font,
+            fill=white
+        )
+
+
 def drawLeadingLeague(
     x: int,
     y: int,
@@ -98,23 +115,44 @@ def drawLeadingLeague(
     tz: pytz.timezone
 ):
     img = Image.open(f"assets/leaguesIcons/{league}.png").resize(icon_size)
-    try:
-        timetable.paste(
-            img,
-            (int(x + content_x / 2 - icon_b / 2) +
-             league_icon_margin, y + padding_top),
-            img
-        )
-    except ValueError:
-        _logger.error(f"Error while pasting {league}")
-        img_draw.text(
-            (x, y),
-            league,
-            font=font,
-            fill=white
-        )
+    _pasteImg(
+        timetable,
+        img_draw,
+        img,
+        x + content_x / 2 - icon_b / 2 + league_icon_margin,
+        y + padding_top,
+        league
+    )
     drawHour(x, y, img_draw, padding_top, time, tz)
     drawSeparator(x, y, img_draw, padding_top)
+
+
+def drawFooterLeague(
+    x: int,
+    y: int,
+    img_draw: ImageDraw,
+    bo_size: int
+):
+    x -= left
+    text = f"BO {bo_size}"
+    _, _, w, _ = img_draw.textbbox((0, 0), text, font=hour_font)
+    img_draw.text(
+        (
+            x + content_x / 2 - w / 2,
+            y + icon_b / 2
+        ),
+        text,
+        font=hour_font,
+        fill=white
+    )
+
+
+def howManyBoNot1(data: list[dict]):
+    count = 0
+    for data in data:
+        if data['match']['strategy']['count'] > 1:
+            count += 1
+    return count
 
 
 def drawHalfDayMatches(
@@ -126,14 +164,26 @@ def drawHalfDayMatches(
     tz: pytz.timezone
 ):
     last_league = None
-    py = 0 if is_am else content_y - (len(data) + 1) * (icon_b + margin)
+    bo_size = 1
+    if is_am:
+        py = 0
+    else:
+        py = content_y - ((len(data) + 1) * (icon_b + margin) +
+                          bo_text_height * howManyBoNot1(data))
 
     for data_index, data in enumerate(data):
         match = data['match']
         x = left + margin + (content_x + margin) * week_day
         y = top + (icon_b + margin) * data_index + py
         if last_league != data['league']:
+            if bo_size > 1:
+                drawFooterLeague(
+                    x, y - icon_b / 2 - margin,
+                    img_draw,
+                    bo_size
+                )
             last_league = data['league']
+            bo_size = match['strategy']['count']
             padding_top = 0 if data_index == 0 else title_bot_margin
             py += icon_b + margin + padding_top
             drawLeadingLeague(
@@ -152,7 +202,15 @@ def drawHalfDayMatches(
             x, y,
             timetable,
             img_draw,
+            data['state'] == 'completed',
             match['teams']
+        )
+    if bo_size > 1:
+        y = top + (icon_b + margin) * (data_index) + py + icon_b / 2
+        drawFooterLeague(
+            x, y,
+            img_draw,
+            bo_size
         )
 
 
