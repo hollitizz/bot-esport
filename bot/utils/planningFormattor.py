@@ -154,6 +154,14 @@ def howManyBoNot1(data: list[dict]):
             count += 1
     return count
 
+def howManyLeagues(data: list[dict]):
+    count = 0
+    last_league = None
+    for data in data:
+        if last_league != data['league']:
+            count += 1
+            last_league = data['league']
+    return count
 
 def drawHalfDayMatches(
     data: list[dict],
@@ -165,11 +173,13 @@ def drawHalfDayMatches(
 ):
     last_league = None
     bo_size = 1
+    how_many_leagues = howManyLeagues(data)
     if is_am:
         py = 0
     else:
-        py = content_y - ((len(data) + 1) * (icon_b + margin) +
-                          bo_text_height * howManyBoNot1(data))
+        py = content_y - (
+            len(data) * (icon_b + margin) + bo_text_height * howManyBoNot1(data) + how_many_leagues * (icon_b - 15)
+        )
 
     for data_index, data in enumerate(data):
         match = data['match']
