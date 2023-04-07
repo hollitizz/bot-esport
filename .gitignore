@@ -10,3 +10,5 @@ result.png
 /response.py
 .vscode
 .prettierrc
+tmp*
+getLeaguesIcons.py

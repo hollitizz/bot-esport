@@ -49,7 +49,7 @@ async def sendPlanning(self: BotType):
             planning = getFormattedPlanning(
                 guild.language,
                 guild.timezone,
-                getSchedulesByDayOnCurrentWeek(schedules)
+                schedules
             )
         except Exception as e:
             _logger.error(e)
@@ -80,14 +80,24 @@ async def refreshPlanning(self: BotType):
         if message is None:
             await sendPlanning(self)
             return
+        today = datetime.date.today()
+        max_date = today - datetime.timedelta(days=today.weekday() + 7)
         schedules = self.api.getSchedules(
             guild.language, guild.followed_leagues
-        ).get('data', {}).get('schedule', {}).get('events', [])
+        ).get('data', {}).get('schedule', {})
+        last_date = datetime.datetime.fromisoformat(schedules.get('events', [])[-1].get('startTime', '')).date()
+        while not max_date < last_date:
+            if not schedules.get('events', []):
+                break
+            schedules = self.api.getSchedules(
+                guild.language, guild.followed_leagues, schedules['pages']['newer']
+            ).get('data', {}).get('schedule', {})
+            last_date = datetime.datetime.fromisoformat(schedules.get('events', [])[-1].get('startTime', '')).date()
         try:
             planning = getFormattedPlanning(
                 guild.language,
                 guild.timezone,
-                getSchedulesByDayOnCurrentWeek(schedules)
+                schedules['events'],
             )
             with BytesIO() as image_binary:
                 planning.save(image_binary, 'PNG')

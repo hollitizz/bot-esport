@@ -21,5 +21,8 @@ class riotApiRequests:
     def getLeagues(self, language) -> dict:
         return self.__get("getLeagues", hl=language)
 
-    def getSchedules(self, language: str, leagueId: list['str']) -> dict:
-        return self.__get("getSchedule", hl=language, leagueId="%2C".join(leagueId))
+    def getSchedules(self, language: str, leagueId: list['str'], newer = None) -> dict:
+        if newer:
+            return self.__get("getSchedule", hl=language, leagueId="%2C".join(leagueId), pageToken=newer)
+        else:
+            return self.__get("getSchedule", hl=language, leagueId="%2C".join(leagueId))

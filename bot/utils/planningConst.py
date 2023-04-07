@@ -13,5 +13,5 @@ margin = 10
 title_bot_margin = 20
 league_icon_margin = 20
 bo_text_height = 30
-line_len = 140
+separator_len = 140
 line_width = 2
