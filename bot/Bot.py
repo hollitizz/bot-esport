@@ -36,7 +36,6 @@ class Bot(commands.Bot):
         for cogName, cog in inspect.getmembers(cogs):
             if inspect.isclass(cog):
                 await self.load_extension(f"cogs.{cogName}")
-        #await self.tree.sync(guild=discord.Object(id=os.getenv("ADMIN_GUILD_ID")))
         await self.tree.sync()
         _logger.info("Commands loaded")
         self.exportDataBaseTask.start()
