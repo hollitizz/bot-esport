@@ -167,7 +167,7 @@ def drawGame(
             img.save(f"assets/teamsIcons/{team['code']}.png", "PNG")
         if is_completed and team['result']['outcome'] == 'loss':
             A = img.getchannel('A')
-            newA = A.point(lambda i: 128 if i > 100 else 0)
+            newA = A.point(lambda i: 50 if i > 0 else 0)
             img.putalpha(newA)
         _pasteImg(timetable, img_draw, img.resize(size), x, y, team['name'])
         if size == icon_size:
