@@ -156,7 +156,7 @@ def drawGame(
     for team in teams:
         if os.path.exists(f"assets/teamsIcons/{team['code']}.png"):
             img = Image.open(
-                f"assets/teamsIcons/{team['code']}.png").resize(size)
+                f"assets/teamsIcons/{team['code']}.png")
             if img.mode != 'RGBA':
                 img = img.convert('RGBA')
                 img.save(f"assets/teamsIcons/{team['code']}.png", "PNG")
@@ -165,12 +165,11 @@ def drawGame(
             if img.mode != 'RGBA':
                 img = img.convert('RGBA')
             img.save(f"assets/teamsIcons/{team['code']}.png", "PNG")
-            img = img.resize(size)
         if is_completed and team['result']['outcome'] == 'loss':
             A = img.getchannel('A')
             newA = A.point(lambda i: 128 if i > 100 else 0)
             img.putalpha(newA)
-        _pasteImg(timetable, img_draw, img, x, y, team['name'])
+        _pasteImg(timetable, img_draw, img.resize(size), x, y, team['name'])
         if size == icon_size:
             x += icon_b + margin
         else:
