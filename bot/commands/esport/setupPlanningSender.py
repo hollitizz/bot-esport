@@ -1,3 +1,4 @@
+import logging
 from discord import Interaction
 from utils.createSelect import createViewForSelect
 from utils.getChannelByName import getChannelByName
@@ -50,7 +51,7 @@ async def setupPlanningSender(bot: BotType, ctx: Interaction, channel_id: str):
     leagues: list[dict] = bot.api.getLeagues(
         language
     ).get("data", {}).get("leagues", [])
-    print(league.get("region", "") for league in leagues)
+    logging.info(league.get("region", "") for league in leagues)
     leagues.sort(key=lambda x: SORT_ORDER.get(
         language, []
     ).index(x.get("region", "")) or -1)
