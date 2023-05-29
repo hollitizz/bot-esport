@@ -15,6 +15,8 @@ SORT_ORDER = {
         'TURQUIE',
         'COMMUNAUTÉ DES ÉTATS INDÉPENDANTS',
         'AMÉRIQUE LATINE',
+        'AMÉRIQUE LATINE NORD',
+        'AMÉRIQUE LATINE SUD',
         'VIETNAM',
         'OCÉANIE',
         'HONG KONG, MACAO, TAÏWAN',
@@ -49,9 +51,11 @@ async def setupPlanningSender(bot: BotType, ctx: Interaction, channel_id: str):
     bot.db.updateGuildSchedulerChannel(ctx.guild.id, channel.id)
     language = bot.db.getGuildPreferredLanguage(ctx.guild.id)
     leagues: list[dict] = bot.api.getLeagues(
-        language
+        'en-US'
     ).get("data", {}).get("leagues", [])
-    logging.info(list([league.get("region", "") for league in leagues]))
+    logging.info(list([league.get("region", "") for league in bot.api.getLeagues(
+        language
+    ).get("data", {}).get("leagues", [])]))
     leagues.sort(key=lambda x: SORT_ORDER.get(
         language, []
     ).index(x.get("region", "")) or -1)
