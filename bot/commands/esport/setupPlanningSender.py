@@ -32,6 +32,7 @@ SORT_ORDER = {
         'TURKEY',
         'COMMONWEALTH OF INDEPENDENT STATES',
         'LATIN AMERICA',
+        'LATIN AMERICA NORTH', 'LATIN AMERICA SOUTH',
         'VIETNAM',
         'OCEANIA',
         'HONG KONG, MACAU, TAIWAN',
@@ -53,9 +54,7 @@ async def setupPlanningSender(bot: BotType, ctx: Interaction, channel_id: str):
     leagues: list[dict] = bot.api.getLeagues(
         language
     ).get("data", {}).get("leagues", [])
-    logging.info(list([league.get("region", "") for league in bot.api.getLeagues(
-        'en-US'
-    ).get("data", {}).get("leagues", [])]))
+
     leagues.sort(key=lambda x: SORT_ORDER.get(
         language, []
     ).index(x.get("region", "")))
