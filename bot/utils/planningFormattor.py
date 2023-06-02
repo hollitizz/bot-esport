@@ -169,7 +169,7 @@ def drawMultipleGames(
             (30, 30),
         )
         if i % 2 == 0:
-            tmp_x += 70 + margin
+            tmp_x += 75 + margin
         else:
             y += 30 + margin / 2
             tmp_x = x
