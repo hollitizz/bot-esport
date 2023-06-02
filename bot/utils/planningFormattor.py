@@ -82,6 +82,37 @@ def drawLeadingLeague(
     drawSeparator(x, y, img_draw, padding_top)
 
 
+def drawMultipleLeadingLeague(
+    x: int,
+    y: int,
+    timetable: ImageType,
+    img_draw: ImageDrawType,
+    padding_top: int,
+    data: list[dict],
+    tz: pytz.timezone,
+):
+    league = data[0]["league"]["slug"]
+    img = Image.open(f"assets/leaguesIcons/{league}.png").resize([45, 45])
+    img2 = Image.open(f"assets/leaguesIcons/{data[1]['league']['slug']}.png").resize([45, 45])
+    _pasteImg(
+        timetable,
+        img_draw,
+        img,
+        x + content_x / 2 - 10 - icon_b / 2 + league_icon_margin,
+        y + padding_top + 25,
+        league,
+    )
+    _pasteImg(
+        timetable,
+        img_draw,
+        img2,
+        x + content_x / 2 - 10 - icon_b / 2 + league_icon_margin + 45  + margin / 2,
+        y + padding_top + 25,
+        league,
+    )
+    drawHour(x, y, img_draw, padding_top, data[0]["startTime"], tz)
+    drawSeparator(x, y, img_draw, padding_top)
+
 def drawFooterLeague(x: int, y: int, img_draw: ImageDrawType, bo_size: int):
     x -= left
     text = f"BO {bo_size}"
@@ -195,7 +226,8 @@ def drawHalfDayMatches(
             + how_many_leagues * (icon_b + margin)
         )
 
-    for data_index, data in enumerate(datas.values()):
+    data_list = list(datas.values())
+    for data_index, data in enumerate(data_list):
         match = data[0]["match"]
         x = left + margin + (content_x + margin) * week_day
         y = top + (icon_b + margin) * data_index + py
@@ -206,16 +238,28 @@ def drawHalfDayMatches(
             bo_size = match["strategy"]["count"]
             padding_top = 0 if data_index == 0 else title_bot_margin
             py += icon_b + margin + padding_top
-            drawLeadingLeague(
-                x,
-                y,
-                timetable,
-                img_draw,
-                padding_top,
-                last_league["slug"],
-                data[0]["startTime"],
-                tz,
-            )
+            # if data_list[data_index][0]['startTime'] == data_list[data_index + 1][0]['startTime']:
+            if len(data) == 1 or data[0]["league"]["slug"] == data[1]["league"]["slug"]:
+                drawLeadingLeague(
+                    x,
+                    y,
+                    timetable,
+                    img_draw,
+                    padding_top,
+                    last_league["slug"],
+                    data[0]["startTime"],
+                    tz,
+                )
+            else:
+                drawMultipleLeadingLeague(
+                    x,
+                    y,
+                    timetable,
+                    img_draw,
+                    padding_top,
+                    data,
+                    tz,
+                )
             y += icon_b + margin + padding_top
         if len(data) == 1:
             drawGame(
@@ -290,3 +334,5 @@ def getFormattedPlanning(language: str, timezone: pytz.timezone, schedules: dict
         drawHalfDayMatches(am, week_day, timetable, img_draw, "am", tz)
         drawHalfDayMatches(pm, week_day, timetable, img_draw, "pm", tz)
     return timetable
+
+
