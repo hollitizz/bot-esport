@@ -81,7 +81,8 @@ async def refreshPlanning(self: BotType):
             await sendPlanning(self)
             return
         today = datetime.date.today()
-        max_date = today - datetime.timedelta(days=today.weekday() + 7)
+        today_weekday = today.weekday()
+        max_date = today + datetime.timedelta(days=6 - today_weekday)
         schedules = self.api.getSchedules(
             guild.language, guild.followed_leagues
         ).get('data', {}).get('schedule', {})
