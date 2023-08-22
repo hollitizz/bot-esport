@@ -87,7 +87,7 @@ async def refreshPlanning(self: BotType):
             guild.language, guild.followed_leagues
         ).get('data', {}).get('schedule', {})
         last_date = datetime.datetime.fromisoformat(schedules.get('events', [])[-1].get('startTime', '')).date()
-        while not max_date < last_date:
+        while last_date <= max_date:
             if not schedules.get('events', []):
                 break
             schedules = self.api.getSchedules(
