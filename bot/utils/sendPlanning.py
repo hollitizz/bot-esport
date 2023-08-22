@@ -90,6 +90,7 @@ async def refreshPlanning(self: BotType):
         last_date = datetime.datetime.fromisoformat(schedules.get('events', [])[-1].get('startTime', '')).date()
         while last_date <= max_date:
             _logger.info(f"Last date: {last_date}")
+            _logger.info(schedules.get('events', []))
             if not schedules.get('events', []):
                 break
             schedules = self.api.getSchedules(
@@ -108,3 +109,6 @@ async def refreshPlanning(self: BotType):
                 await message.edit(attachments=[discord.File(fp=image_binary, filename='planning.png')])
         except Exception as e:
             _logger.error(traceback.format_exc())
+
+if __name__ == "__main__":
+    pass
