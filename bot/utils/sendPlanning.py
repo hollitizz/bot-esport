@@ -83,19 +83,18 @@ async def refreshPlanning(self: BotType):
         today = datetime.datetime.now()
         today_weekday = today.weekday()
         max_date = (today + datetime.timedelta(days=6 - today_weekday)).date()
-        _logger.info(f"Max date: {max_date}")
         schedules = self.api.getSchedules(
             guild.language, guild.followed_leagues
         ).get('data', {}).get('schedule', {})
         last_date = datetime.datetime.fromisoformat(schedules.get('events', [])[-1].get('startTime', '')).date()
         while last_date <= max_date:
-            _logger.info(f"Last date: {last_date}")
-            _logger.info(schedules.get('events', []))
             if not schedules.get('events', []):
                 break
             schedules = self.api.getSchedules(
                 guild.language, guild.followed_leagues, schedules['pages']['newer']
             ).get('data', {}).get('schedule', {})
+            if last_date == datetime.datetime.fromisoformat(schedules.get('events', [])[-1].get('startTime', '')).date():
+                break
             last_date = datetime.datetime.fromisoformat(schedules.get('events', [])[-1].get('startTime', '')).date()
         try:
             planning = getFormattedPlanning(
@@ -109,6 +108,3 @@ async def refreshPlanning(self: BotType):
                 await message.edit(attachments=[discord.File(fp=image_binary, filename='planning.png')])
         except Exception as e:
             _logger.error(traceback.format_exc())
-
-if __name__ == "__main__":
-    pass
