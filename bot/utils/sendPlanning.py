@@ -80,18 +80,21 @@ async def refreshPlanning(self: BotType):
         if message is None:
             await sendPlanning(self)
             return
-        today = datetime.date.today()
-        max_date = today - datetime.timedelta(days=today.weekday() + 7)
+        today = datetime.datetime.now()
+        today_weekday = today.weekday()
+        max_date = (today + datetime.timedelta(days=6 - today_weekday)).date()
         schedules = self.api.getSchedules(
             guild.language, guild.followed_leagues
         ).get('data', {}).get('schedule', {})
         last_date = datetime.datetime.fromisoformat(schedules.get('events', [])[-1].get('startTime', '')).date()
-        while not max_date < last_date:
+        while last_date <= max_date:
             if not schedules.get('events', []):
                 break
             schedules = self.api.getSchedules(
                 guild.language, guild.followed_leagues, schedules['pages']['newer']
             ).get('data', {}).get('schedule', {})
+            if last_date == datetime.datetime.fromisoformat(schedules.get('events', [])[-1].get('startTime', '')).date():
+                break
             last_date = datetime.datetime.fromisoformat(schedules.get('events', [])[-1].get('startTime', '')).date()
         try:
             planning = getFormattedPlanning(
