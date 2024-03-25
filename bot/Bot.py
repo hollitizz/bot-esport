@@ -73,7 +73,7 @@ class Bot(commands.Bot):
         _logger.info(f"Waiting {round(delta.total_seconds())} seconds ({target.strftime('%d/%m/%Y, %H:%M:%S')}) before refreshing planning")
         await asyncio.sleep(delta.total_seconds())
 
-    @tasks.loop(hours=1)
+    @tasks.loop(hours=24)
     async def exportDataBaseTask(self):
         exportDataBase()
 
