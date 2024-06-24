@@ -59,8 +59,6 @@ class Bot(commands.Bot):
 
     @tasks.loop(hours=24)
     async def refresh_planning(self):
-        if datetime.datetime.now(_tz).weekday() == 0:
-            return
         await refreshPlanning(self)
 
     @refresh_planning.before_loop
