@@ -58,6 +58,9 @@ class SQLRequests(MySQLConnection):
         return self.__cursor.fetchone()[0]
 
     def updateGuildPreferredLanguage(self, guild_id: int, language: str):
+        if not self.guildExist(guild_id):
+            self.createGuild(guild_id)
+
         request = f"""
             UPDATE guilds
             SET language = "{language}"
@@ -66,9 +69,13 @@ class SQLRequests(MySQLConnection):
         self.__clearCache()
         self.__cursor.execute(request)
         self.commit()
+
         _logger.info(f"Updated guild: {guild_id} preferred language to: {language}")
 
     def updateGuildSchedulerChannel(self, guild_id: int, channel_id: int):
+        if not self.guildExist(guild_id):
+            self.createGuild(guild_id)
+
         request = f"""
             UPDATE guilds
             SET scheduler_channel = "{channel_id}"
@@ -113,3 +120,13 @@ class SQLRequests(MySQLConnection):
         self.__clearCache()
         self.__cursor.execute(request)
         return [dbGuild(*i) for i in self.__cursor.fetchall()]
+
+    def guildExist(self, guild_id: int):
+        request = f"""
+            SELECT id
+            FROM guilds
+            WHERE id = "{guild_id}"
+        """
+        self.__clearCache()
+        self.__cursor.execute(request)
+        return self.__cursor.fetchone() is not None
