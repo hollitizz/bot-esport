@@ -1,22 +1,23 @@
 import logging
 from mysql.connector import MySQLConnection
-from mysql.connector.connection import CursorBase
 import os
 
 from utils.customClasses import dbGuild
+import os
 
 _logger = logging.getLogger(__name__)
+
 
 class SQLRequests(MySQLConnection):
     def __init__(self):
         _logger.info("Connecting to database...")
         super().__init__(
-            host=os.getenv('DB_HOST'),
-            user=os.getenv('DB_USER'),
-            password=os.getenv('DB_PASS'),
-            database=os.getenv('DB_NAME')
+            host=os.getenv("DB_HOST"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASS"),
+            database=os.getenv("DB_NAME"),
         )
-        self.__cursor: CursorBase = self.cursor()
+        self.__cursor = self.cursor()
         _logger.info("Database connected!")
 
     def __clearCache(self):
@@ -76,7 +77,9 @@ class SQLRequests(MySQLConnection):
         self.__clearCache()
         self.__cursor.execute(request)
         self.commit()
-        _logger.info(f"Updated guild: {guild_id} scheduler channel to channel: {channel_id}")
+        _logger.info(
+            f"Updated guild: {guild_id} scheduler channel to channel: {channel_id}"
+        )
 
     def updatePlanningLastMessage(self, guild_id: int, new_message_id: int):
         request = f"""
@@ -98,7 +101,9 @@ class SQLRequests(MySQLConnection):
         self.__clearCache()
         self.__cursor.execute(request)
         self.commit()
-        _logger.info(f"Updated guild: {guild_id} followed leagues to: {','.join(leagues)}")
+        _logger.info(
+            f"Updated guild: {guild_id} followed leagues to: {','.join(leagues)}"
+        )
 
     def getGuilds(self) -> list[dbGuild]:
         request = f"""
