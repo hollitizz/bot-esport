@@ -71,7 +71,9 @@ async def refreshPlanning(self: BotType):
                 message = await channel.fetch_message(int(guild.last_message))
             except discord.errors.NotFound:
                 message = None
-        if message is None:
+        if message is None or (
+            datetime.datetime.now() - message.created_at > datetime.timedelta(days=7)
+        ):
             await sendPlanning(self)
             return
         today = datetime.datetime.now()
