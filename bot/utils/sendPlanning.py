@@ -72,7 +72,8 @@ async def refreshPlanning(self: BotType):
             except discord.errors.NotFound:
                 message = None
         if message is None or (
-            datetime.datetime.now() - message.created_at > datetime.timedelta(days=7)
+            datetime.datetime.now(datetime.timezone.utc) - (message.created_at)
+            > datetime.timedelta(days=7)
         ):
             await sendPlanning(self)
             return
