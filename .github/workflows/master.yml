@@ -1,7 +1,7 @@
 name: bot-esport
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
   workflow_dispatch:
 jobs:
   deploy:
@@ -19,6 +19,6 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
 
           script: |
-            cd ~/dev/bot-esport
+            cd ~/dev/perso/bot-esport
             git pull
             docker compose up -d --build bot
